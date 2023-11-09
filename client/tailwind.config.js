@@ -1,5 +1,11 @@
 export default {
   plugins: [],
+  content: [
+    './index.html',
+    './src/App.svelte',
+    './src/pages/**/*.{html,js,svelte}',
+    './src/components/**/*.{html,js,svelte}'
+  ],
     theme: {
       screens: {
       xs: '375px',
@@ -12,6 +18,7 @@ export default {
       extend: {
         colors: {
           dp: {
+            'background': '#EEF2FF',
             'blue-500': '#0700F6',
             'light-blue-400': '#99E2E7',
             'light-blue-800': '#33585A',

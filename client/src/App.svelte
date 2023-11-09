@@ -1,8 +1,21 @@
 <script>
   import TailwindCss from './lib/TailwindCSS.svelte';
-  import { Route, Router } from 'svelte-navigator'
+  import { Route, Router } from 'svelte-navigator';
+  import NotFound from './pages/notfound/NotFound.svelte';
+  import Home from './pages/home/Home.svelte';
+  import Boards from './pages/boards/Boards.svelte';
 </script>
 
-<main>
-  <h1 class="py-12 px-4 border border-indigo-700 shadow-lg">Hello!</h1>
-</main>
+<TailwindCss />
+
+<Router>
+  <Route path="/">
+    <Home />
+  </Route>
+  <Route path="/boards/*">
+    <Boards />
+  </Route>
+  <Route path="/*">
+    <NotFound />
+  </Route>
+</Router>
