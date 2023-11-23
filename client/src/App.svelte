@@ -1,21 +1,26 @@
 <script>
   import TailwindCss from './lib/TailwindCSS.svelte';
-  import { Route, Router } from 'svelte-navigator';
+  // @ts-ignore
+  import { Router, Link, Route } from "svelte-routing";
   import NotFound from './pages/notfound/NotFound.svelte';
   import Home from './pages/home/Home.svelte';
   import Boards from './pages/boards/Boards.svelte';
+  import Posts from './pages/posts/Posts.svelte';
+    import Header from './components/Header/Header.svelte';
+
+  export let url = "";
 </script>
 
 <TailwindCss />
 
-<Router>
-  <Route path="/">
-    <Home />
-  </Route>
-  <Route path="/boards/*">
-    <Boards />
-  </Route>
-  <Route path="/*">
-    <NotFound />
-  </Route>
+<Router {url}>
+  <nav>
+    <Header />
+  </nav>
+  <div>
+    <Route path="/" component={Home} />
+    <Route path="/boards/:name" component={Boards} />
+    <Route path="/boards/:name/posts/:id" component={Posts} />
+    <Route path="/*" component={NotFound} />
+  </div>
 </Router>

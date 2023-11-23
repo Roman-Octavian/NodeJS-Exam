@@ -1,13 +1,13 @@
 <script>
     import { onMount } from 'svelte';
-    import Header from '../../components/header/Header.svelte';
 
     let currentBoardName = "";
     let board = {};
     let posts = [];
 
     onMount(async () => {
-        currentBoardName = window.location.pathname.split("/").pop();
+        currentBoardName = window.location.pathname.split("/")[2];
+        console.log(currentBoardName);
         const response = await fetch("http://localhost:8080/api/v1/boards/" + currentBoardName);
         board = await response.json();
         board = board.data[0];
@@ -24,7 +24,7 @@
     }
     
 </script>
-<Header />
+
 <main class="bg-dp-background h-screen">
     <div class="flex w-screen justify-center pt-14">
         <h1 class="flex self-center ml-5 text-center text-red-600 font-semibold text-dp-headline-5-m md:text-dp-headline-4-m lg:text-dp-headline-3-m xl:text-dp-headline-2-m 2xl:text-dp-headline-2-m mb-3">

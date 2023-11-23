@@ -1,6 +1,5 @@
 import { Router } from "express";
 import database from "../databases/connection.js";
-
 const router = Router();
 
 router.get("/api/v1/posts", async (req, res) => {
@@ -48,7 +47,6 @@ router.post("/api/v1/posts", async (req, res) => {
     } catch (exception) {
         return res.status(500).send({message: exception.toString()});
     }
-   
 });
 
 export default router;
