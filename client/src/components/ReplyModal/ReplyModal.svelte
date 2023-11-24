@@ -1,21 +1,21 @@
 <script>
-    export let board;
+    export let postProp;
     let files;
 
-    let newPost = {
-        title: '',
+    let newReply = {
         text: '',
-        image_original: '',
-        image_thumbnail: '',
+        image_original: null,
+        image_thumbnail: null,
         date_time: '',
-        bump_order: 1,
+        posts_id: '',
     }
 
-    let uploadOK = false;
+    let uploadOK = true;
 
 
     async function uploadImage() {
         try {
+            uploadOK = false;
             const formData = new FormData();
             formData.append('file', files[0]);
             const response = await fetch("http://localhost:8080/api/v1/upload_image", {
@@ -24,26 +24,24 @@
             });
             if (response.ok) {
                 const data = await response.json();
-                newPost.image_thumbnail = data.data.result.variants.filter((variant) => variant.split('/').pop() === 'thumbnail');
-                newPost.image_original = data.data.result.variants.filter((variant) => variant.split('/').pop() === 'original');
+                newReply.image_thumbnail = data.data.result.variants.filter((variant) => variant.split('/').pop() === 'thumbnail');
+                newReply.image_original = data.data.result.variants.filter((variant) => variant.split('/').pop() === 'original');
                 uploadOK = true;
-            } else {
-                uploadOK = false;
             }
         } catch (error) {
-            uploadOK = false;
             console.error(error);
         }
     } 
 
   async function post() {
-        newPost.date_time = new Date().toISOString().slice(0, -1);
-        newPost.boards_id = board.id;
+        newReply.date_time = new Date().toISOString().slice(0, -1);
+        newReply.posts_id = postProp.id;
+        console.log(newReply);
         try {
-            const response = await fetch('http://localhost:8080/api/v1/posts', {
+            const response = await fetch('http://localhost:8080/api/v1/replies', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(newPost)
+                body: JSON.stringify(newReply)
             });
             if (response.ok) {
                 window.onbeforeunload = null;
@@ -58,19 +56,12 @@
 </script>
 
 <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" on:submit|preventDefault={post}>
-  <h2>New Post</h2>
-  <div class="mb-4">
-      <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
-          Title:
-      </label>
-      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="title" type="text" placeholder="Title" bind:value={newPost.title} />
-  </div>
-
+  <h2>Reply in thread:</h2>
   <div class="mb-4">
       <label class="block text-gray-700 text-sm font-bold mb-2" for="text">
           Text:
       </label>
-          <textarea class="shadow appearance-none border rounded w-full h-20 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="text" placeholder="Your post message..." bind:value={newPost.text} />
+          <textarea class="shadow appearance-none border rounded w-full h-20 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="text" placeholder="Your reply..." bind:value={newReply.text} />
   </div>
       <div class="mb-4">
           <label for="file" class="block text-gray-700 text-sm font-bold mb-2">

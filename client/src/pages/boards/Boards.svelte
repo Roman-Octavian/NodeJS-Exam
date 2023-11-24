@@ -6,7 +6,6 @@
     let board = {};
     let posts = [];
     let open = false;
-
     onMount(async () => {
         currentBoardName = window.location.pathname.split("/").pop();
         const response = await fetch("http://localhost:8080/api/v1/boards/" + currentBoardName);
@@ -14,14 +13,16 @@
         board = board.data[0];
         
         const result = await fetch("http://localhost:8080/api/v1/posts/" + board.id);
-        posts = await result.json();
-        posts = posts.data;
+        const postsData = await result.json();
+        if (!postsData.error) {
+            posts = postsData.data;
+            posts.sort((a, b) => a.bump_order - b.bump_order);
+        }
     });
 
     function toggleModal() {
         open = !open;
     }
-    
 </script>
 
 <main class="bg-dp-background h-screen">
@@ -39,28 +40,25 @@
             {!open ? "New Thread" : "Close"}
         </button>
     </div>
-
-    <div class="grid justify-items-center w-screen gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
-        {#each posts as post}
-        <a href={"/boards/" + board.name.toLowerCase() + "/posts/" + post.id}>
-            <div class="p-10">
-                <p>File: <a target="blank" href={post.image} class="text-blue-600 hover:text-purple-600">
-                    Original Image
-                </a></p>
-                <img class="grid cursor-pointer shadow-2xl w-[128px] h-[128px]" src={post.image} alt={post.title}>
-                <h2 class="font-semibold line-clamp line-clamp-2 origin-top-left text-ellipsis overflow-hidden">
-                    {post.title}
-                </h2>
-                <p class="text-ellipsis line-clamp line-clamp-5 overflow-hidden">{post.content}</p>
-            </div>
-        </a>
-        
+    <hr class="border-solid border-t-[1px] border-sky-900 mt-6" />
+    <div class="grid justify-items-center justify-evenly w-screen gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
+        {#each posts as post (post.id)}
+            <a class="w-56" href={"/boards/" + board.name.toLowerCase() + "/posts/" + post.id}>
+                <div class="p-10">
+                    <p>File: <a target="blank" href={post.image_original} class="text-blue-600 hover:text-purple-600">
+                        Original Image
+                    </a></p>
+                    <img class="grid cursor-pointer shadow-2xl" src={post.image_thumbnail} alt={post.title}>
+                    <h2 class="font-semibold line-clamp line-clamp-2 origin-top-left text-ellipsis overflow-hidden">
+                        {post.title}
+                    </h2>
+                    <p class="text-ellipsis line-clamp line-clamp-5 overflow-hidden">{post.text}</p>
+                </div>
+            </a>
         {:else}
-        <div class="flex w-screen justify-center pt-14">
-            <p class="flex self-center ml-5 text-center">No posts available</p>
+        <div class="flex justify-center pt-14">
+            <p class="flex self-center text-center">No posts available</p>
         </div>
         {/each}
     </div>
-
 </main>
-

@@ -1,56 +1,39 @@
-import database from "./connection.js";
-import * as dotenv from "dotenv";
-dotenv.config()
+import connection from "./connection.js";
+import { clearAll, createBoards, createPosts, createReplies, createModerators, initializeAdmin, initializeBoards } from "./sql.js";
+import bcrypt from 'bcrypt';
 
 const isDeleteMode = process.argv.findIndex((argument) => argument === "delete_mode") === -1 ? false : true;
 
-if (isDeleteMode) {
-    database.execute(`DROP TABLE IF EXISTS boards, posts, replies, moderators, banned`);
-}
+const createTables = async () => {
+    try {
+        if (isDeleteMode) {
+            await connection.query(clearAll);
+            console.log("DROPPED ALL TABLES")
+        }
+        await connection.query(createBoards);
+        console.log('CREATED boards');
 
-database.execute(`
-    CREATE TABLE IF NOT EXISTS boards (
-        id INTEGER PRIMARY KEY AUTO_INCREMENT,
-        name VARCHAR(30) UNIQUE NOT NULL
-    );
-`);
+        await connection.query(createPosts);
+        console.log('CREATED posts');
 
-database.execute(`
-    CREATE TABLE IF NOT EXISTS posts (
-        id INTEGER PRIMARY KEY AUTO_INCREMENT,
-        title VARCHAR(100),
-        date_time DATETIME,
-        bump_order INT,
-        boards_id INTEGER,
-        CONSTRAINT fk_boards FOREIGN KEY (boards_id) REFERENCES boards(id) ON DELETE CASCADE
-    );
-`);
+        await connection.query(createReplies);
+        console.log('CREATED replies');
 
-database.execute(`
-    CREATE TABLE IF NOT EXISTS replies (
-        id INTEGER PRIMARY KEY AUTO_INCREMENT,
-        text VARCHAR(4000),
-        image VARCHAR(255),
-        ip VARCHAR(39),
-        date_time DATETIME,
-        posts_id INTEGER,
-        CONSTRAINT fk_posts FOREIGN KEY (posts_id) REFERENCES posts(id) ON DELETE CASCADE
-    );
-`);
+        await connection.query(createModerators);
+        console.log('CREATED moderators');
 
-database.execute(`
-    CREATE TABLE IF NOT EXISTS moderators (
-        id INTEGER PRIMARY KEY AUTO_INCREMENT,
-        username VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL
-    );
-`);
+        const hashedPassword = await bcrypt.hash("admin", 10);
 
-database.execute(`
-    CREATE TABLE IF NOT EXISTS banned (
-        ip VARCHAR(39)
-    );
-`);
+        await connection.query(initializeAdmin, [hashedPassword]);
+        console.log("INITIALIZED admin");
 
-database.execute(`INSERT INTO moderators(username, password)
-  VALUES(?, ?)`, ["admin", "admin"]);
+        await connection.query(initializeBoards);
+        console.log("INITIALIZED boards");
+
+        connection.end();
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+createTables();

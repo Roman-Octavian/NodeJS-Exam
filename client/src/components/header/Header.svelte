@@ -14,22 +14,31 @@
     });
 </script>
 
-<div class="p-3 flex">
-    {#each boards as board}
-    <p class="mx-1">
-        {'['}
-        <a class="text-blue-600 hover:text-purple-600" href={"/boards/" + board.name.toLowerCase()}>
-            {board.name.charAt(0).toUpperCase() + board.name.slice(1)}
-        </a>
-        {']'}
-    </p>
-    {:else}
-    <p>No boards exist</p>
-    {/each}
+<div class="p-3 flex justify-between flex-wrap">
+    <div class="flex flex-row">
+        {#each boards as board}
+        <p class="mx-1">
+            {'['}
+            <a class="text-blue-600 hover:text-purple-600" href={"/boards/" + board.name.toLowerCase()}>
+                {board.name.charAt(0).toUpperCase() + board.name.slice(1)}
+            </a>
+            {']'}
+        </p>
+        {:else}
+        <p>No boards exist</p>
+        {/each}
+    </div>
     
-    <p class="mx-1">
-        {'['}
-        <a class="text-red-600 hover:text-purple-600" href={"/"}>Home</a>
-        {']'}
-    </p>
+    <div class="flex flex-row">
+        <p class="mx-1">
+            {'['}
+            <a class="text-red-600 hover:text-purple-600" href={"/"}>Home</a>
+            {']'}
+        </p>
+        <p class="mx-1">
+            {'['}
+            <a class="text-red-600 hover:text-purple-600" href={"/login"}>Login</a>
+            {']'}
+        </p>
+    </div>
 </div>

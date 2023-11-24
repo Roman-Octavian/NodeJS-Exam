@@ -30,7 +30,7 @@
                 <p>
                     Imageboards, similar to bulletin board systems, are a type of Internet forum that focuses on the posting of images, often alongside text and discussion. The first imageboards were created in Japan as an extension of the textboard concept.
                         <br><br>
-                    Imageboards are transitory with content—on some boards (especially highly trafficked ones), the thread deletion time can be as little as 10 minutes. In Japan, where imageboards are more common, topics will vary widely, ranging from trains to current news. The most popular English language imageboard, 4chan which this website takes heavy inspiration from, similarly has a large variety of topics.
+                    Imageboards are transitory with content—on some boards (especially highly trafficked ones), the thread deletion time can be as little as 10 minutes. In Japan, where imageboards are more common, topics will vary widely, ranging from trains to current news. The most popular and notorious English language imageboard, 4channel which this website takes heavy inspiration from, similarly has a large variety of topics.
                 </p>
             </div>
         </div>

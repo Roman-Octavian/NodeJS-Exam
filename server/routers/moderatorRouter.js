@@ -4,20 +4,19 @@ import database from "../databases/connection.js";
 
 const router = Router();
 
-router.post("/", async (req, res) => {
+router.post("/login", async (req, res) => {
     const { username, password } = req.body
 
       if (!password || !username) {
         return res.status(400).send({ message: 'Please provide all required credentials' });
     }
 
-     const [userFound] = await database.execute('SELECT * FROM users WHERE username = ?', [username]);
+     const [userFound] = await database.execute('SELECT * FROM moderators WHERE username = ?', [username]);
 
      if (userFound.length > 0){
         const userData = userFound[0];
 
         const isSamePassword = bcrypt.compare(password, userData.password)
-
         if (isSamePassword) {
             const user = req.session.user = {
                 id: userData.id,
