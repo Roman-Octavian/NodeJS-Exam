@@ -2,6 +2,7 @@ import express from "express";
 import dotnev from "dotenv";
 import session from "express-session";
 import cors from "cors";
+import { Server } from "socket.io";
 
 const app = express();
 app.use(cors({
@@ -12,13 +13,13 @@ app.use(express.json());
 
 dotnev.config();
 
-app.use(session({
+const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET,
     resave: false, 
     saveUninitialized: true,
     cookie: { secure: false }
-}));
-
+});
+app.use(sessionMiddleware);
 
 import boardsRouter from "./routers/boardsRouter.js";
 app.use(boardsRouter);
@@ -34,3 +35,13 @@ app.use(repliesRouter);
 
 const PORT = process.env.PORT || 8080;
 const server = app.listen(PORT, () => console.log("Server is running on port", server.address().port));
+
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["*"]
+    }
+});
+
+const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+io.use(wrap(sessionMiddleware));
